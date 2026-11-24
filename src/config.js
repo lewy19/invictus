@@ -1,7 +1,7 @@
 // Edit these before deploying.
 export const SITE = {
   name: "Invictus",
-  domain: "https://YOURDOMAIN.com",
+  domain: "https://invictus-liard.vercel.app",
   email: "hello@YOURDOMAIN.com",
   owner: "Lewis Njuguna",
   adsenseClient: "ca-pub-XXXXXXXXXXXXXXXX", // set after AdSense gives you the ID
