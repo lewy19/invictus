@@ -21,19 +21,38 @@ export function weightedGpa(entries, maximum = 4) {
   }
   return { gpa: weighted / credits, credits };
 }
+export function dateDifference(from, to) {
+  const parse = value => {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value || '')) return null;
+    const [year, month, day] = value.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+    if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) return null;
+    return date;
+  };
+  let start = parse(from), end = parse(to);
+  if (!start || !end) return null;
+  if (start > end) [start, end] = [end, start];
+  const days = Math.floor((Date.UTC(end.getFullYear(), end.getMonth(), end.getDate()) - Date.UTC(start.getFullYear(), start.getMonth(), start.getDate())) / 86400000);
+  let years = end.getFullYear() - start.getFullYear();
+  let months = end.getMonth() - start.getMonth();
+  let remaining = end.getDate() - start.getDate();
+  if (remaining < 0) { months--; remaining += new Date(end.getFullYear(), end.getMonth(), 0).getDate(); }
+  if (months < 0) { years--; months += 12; }
+  return { years, months, days: remaining, totalDays: days };
+}
 export const TOOLS = [
  ['kcse-mean','KCSE mean grade calculator','Estimate a seven-subject mean using KNEC grade points.'],
  ['gpa-cgpa','GPA and CGPA calculator','Calculate a credit-weighted GPA on a 4.0 or 5.0 scale.'],
  ['attachment-letter','Attachment application letter','Draft a first-person industrial attachment application letter.'],
- ['cv-word-counter','CV and cover letter word counter','Check length and reading time for application documents.'],
+ ['cv-word-counter','CV and cover letter word counter','Check word, character and sentence counts in application documents.'],
  ['json-formatter','JSON formatter and validator','Format JSON and catch syntax errors in your browser.'],
  ['image-compressor','Image compressor','Resize and compress an image locally in your browser.'],
  ['qr-generator','QR code generator','Create a QR code for text or a web address.'],
  ['word-counter','Word and character counter','Count words, characters, sentences and paragraphs.'],
- ['unit-converter','Unit converter','Convert common length, weight, temperature and data units.'],
+ ['unit-converter','Unit converter','Convert common length, weight and decimal data units.'],
  ['password-generator','Password generator','Create a random password locally on this device.'],
  ['age-date-difference','Age and date difference','Calculate age or the time between two dates.'],
- ['percentage-calculator','Percentage calculator','Work out percentages, increases and decreases.']
+ ['percentage-calculator','Percentage calculator','Calculate a percentage of an amount.']
 ].map(([slug,title,short])=>({slug,title,short,explanation:TOOL_DETAILS[slug]+' '+TOOL_DETAIL_EXAMPLES[slug]}));
 // KUCCPS advises candidates to use cluster weights displayed in their portal.
 // Their official FAQ states PI data is required and unavailable to candidates:

@@ -9,7 +9,7 @@ const cases = [
   ['cv-word-counter', 'Built a responsive page. Tested forms.', '6 words'],
   ['json-formatter', '{"course":"IT","year":2}', '"course": "IT"'],
   ['qr-generator', 'https://example.org/portfolio', null],
-  ['word-counter', 'Build, test, and document.', '4 words'],
+  ['word-counter', 'Build, test, and document.\n\nReview the result.', '7 words · 46 characters · 2 sentences · 2 paragraphs'],
   ['unit-converter', '2.4\nkm\nm', '2,400 m'],
   ['password-generator', '24', null],
   ['age-date-difference', '2005-10-10\n2025-10-24', '20 years, 0 months and 14 days (7319 total days)'],
@@ -29,6 +29,10 @@ for (const [slug, input, expected] of cases) {
   }
   console.log(`${slug}: checked`);
 }
+await page.goto('http://127.0.0.1:4173/tools/age-date-difference');
+await page.locator('textarea').fill('2025-02-31\n2025-03-02');
+await page.getByRole('button', { name: 'Calculate' }).click();
+if (!(await page.locator('pre.result').textContent()).includes('Enter real calendar dates')) failures.push('age-date-difference: impossible date accepted');
 await page.goto('http://127.0.0.1:4173/tools/image-compressor');
 const imageBytes = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p5sAAAAASUVORK5CYII=', 'base64');
 await page.locator('input[type=file]').setInputFiles({ name: 'pixel.png', mimeType: 'image/png', buffer: imageBytes });
