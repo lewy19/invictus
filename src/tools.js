@@ -10,6 +10,17 @@ export function kcseMean(subjects) {
   const ranges=[[81,'A'],[74,'A-'],[67,'B+'],[60,'B'],[53,'B-'],[46,'C+'],[39,'C'],[32,'C-'],[25,'D+'],[18,'D'],[11,'D-'],[7,'E']];
   return {points, mean:ranges.find(([floor])=>points>=floor)?.[1] || 'E'};
 }
+export function weightedGpa(entries, maximum = 4) {
+  if (![4, 5].includes(Number(maximum)) || !entries.length) return null;
+  let weighted = 0, credits = 0;
+  for (const [rawPoints, rawCredits] of entries) {
+    const points = Number(rawPoints), units = Number(rawCredits);
+    if (!Number.isFinite(points) || points < 0 || points > maximum || !Number.isFinite(units) || units <= 0) return null;
+    weighted += points * units;
+    credits += units;
+  }
+  return { gpa: weighted / credits, credits };
+}
 export const TOOLS = [
  ['kcse-mean','KCSE mean grade calculator','Estimate a seven-subject mean using KNEC grade points.'],
  ['gpa-cgpa','GPA and CGPA calculator','Calculate a credit-weighted GPA on a 4.0 or 5.0 scale.'],
@@ -23,7 +34,8 @@ export const TOOLS = [
  ['password-generator','Password generator','Create a random password locally on this device.'],
  ['age-date-difference','Age and date difference','Calculate age or the time between two dates.'],
  ['percentage-calculator','Percentage calculator','Work out percentages, increases and decreases.']
-].map(([slug,title,short])=>({slug,title,short}));
+].map(([slug,title,short])=>({slug,title,short,explanation:TOOL_DETAILS[slug]+' '+TOOL_DETAIL_EXAMPLES[slug]}));
 // KUCCPS advises candidates to use cluster weights displayed in their portal.
 // Their official FAQ states PI data is required and unavailable to candidates:
 // https://www.kuccps.net/node/139. No unofficial formula is presented here.
+import { TOOL_DETAILS, TOOL_DETAIL_EXAMPLES } from './toolDetails.js';
